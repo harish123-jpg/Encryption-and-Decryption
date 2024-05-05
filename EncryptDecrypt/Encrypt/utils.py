@@ -1,26 +1,26 @@
-import base64
-
 from cryptography.fernet import Fernet
+from django.core.cache import cache
 
 
+# Generate a key
 def generate_key():
-    """Generate a new encryption key."""
-    key = Fernet.generate_key()
+    return Fernet.generate_key()
+
+
+def get_or_generate_key():
+    key = cache.get('encryption_key')
+    if not key:
+        key = generate_key()
+        cache.set('encryption_key', key, timeout=None)  # Set timeout=None for indefinite caching
     return key
 
 
-def encrypt_file(file_content, key):
-    """Encrypt file content using the provided key."""
-    cipher = Fernet(key)
-    encrypted_content = cipher.encrypt(file_content)
-    return encrypted_content
-
-
-def decrypt_file(encrypted_content, key):
-    """Decrypt encrypted content using the provided key."""
-    try:
-        cipher = Fernet(key)
-        decrypted_content = cipher.decrypt(encrypted_content)
-        return decrypted_content
-    except Exception as e:
-        return None
+# Encrypt file using provided key and password
+def encrypt_file(file_path, key, password):
+    with open(file_path, 'rb') as file:
+        data = file.read()
+    cipher_suite = Fernet(key)
+    # Include the password in the encrypted data
+    encrypted_data = cipher_suite.encrypt(password.encode() + b'--SPLIT--' + data)
+    with open(file_path + '.encrypted', 'wb') as file:
+        file.write(encrypted_data)

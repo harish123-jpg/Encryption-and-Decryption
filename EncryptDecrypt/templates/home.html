@@ -43,6 +43,10 @@
                             <div class="form-group">
                                 <input type="file" class="form-control-file" name="encryptFile" required>
                             </div>
+                            <div class="form-group">
+                                <label for="encryptPassword">Encryption Password:</label>
+                                <input type="password" class="form-control" id="encryptPassword" name="password" required>
+                            </div>
                             <button type="submit" class="btn btn-primary">Encrypt</button>
                         </form>
                     </div>
@@ -56,6 +60,10 @@
                             {% csrf_token %}
                             <div class="form-group">
                                 <input type="file" class="form-control-file" name="decryptFile" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="decryptPassword">Decryption Password:</label>
+                                <input type="password" class="form-control" id="decryptPassword" name="password" required>
                             </div>
                             <button type="submit" class="btn btn-primary">Decrypt</button>
                         </form>
